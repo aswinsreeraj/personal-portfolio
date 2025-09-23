@@ -226,4 +226,28 @@
   window.addEventListener('load', navmenuScrollspy);
   document.addEventListener('scroll', navmenuScrollspy);
 
+  emailjs.init("97__666edR4TybqaP"); // Your Public Key
+
+const form = document.getElementById("contact-form");
+const successMsg = document.getElementById("success-msg");
+const errorMsg = document.getElementById("error-msg");
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  // Hide previous messages
+  successMsg.classList.add("d-none");
+  errorMsg.classList.add("d-none");
+
+  emailjs.sendForm("service_xns64ph", "template_kvnl5cm", this)
+    .then(() => {
+      successMsg.classList.remove("d-none");
+      form.reset();
+    })
+    .catch(() => {
+      errorMsg.classList.remove("d-none");
+    });
+});
+
+
 })();
