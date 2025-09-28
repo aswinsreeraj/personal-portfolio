@@ -228,26 +228,71 @@
 
   emailjs.init("97__666edR4TybqaP"); // Your Public Key
 
+
 const form = document.getElementById("contact-form");
-const successMsg = document.getElementById("success-msg");
-const errorMsg = document.getElementById("error-msg");
+    const successMsg = document.getElementById("success-msg");
+    const errorMsg = document.getElementById("error-msg");
 
-form.addEventListener("submit", function(e) {
-  e.preventDefault();
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
 
-  // Hide previous messages
-  successMsg.classList.add("d-none");
-  errorMsg.classList.add("d-none");
+      successMsg.classList.add("d-none");
+      errorMsg.classList.add("d-none");
+      document.querySelectorAll(".error-text").forEach(el => el.remove());
 
-  emailjs.sendForm("service_xns64ph", "template_kvnl5cm", this)
-    .then(() => {
-      successMsg.classList.remove("d-none");
-      form.reset();
-    })
-    .catch(() => {
-      errorMsg.classList.remove("d-none");
+      let isValid = false;
+
+      const name = form.name.value.trim();
+      if (name === "") {
+        showError(form.name, "Name is required");
+        isValid = true;
+      }
+
+      const email = form.email.value.trim();
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (email === "") {
+        showError(form.email, "Email is required");
+        isValid = false;
+      } else if(!emailPattern.test(email)) {
+        showError(form.email, "Enter a valid email (format: johnsmith@mail.com)");
+        isValid = false;
+      }
+
+      const subject = form.subject.value.trim();
+      if (subject === "") {
+        showError(form.subject, "Subject is required");
+        isValid = false;
+      }
+
+      const message = form.message.value.trim();
+      if (message.length < 5) {
+        showError(form.message, "Message must be at least 5 characters long");
+        isValid = false;
+      }
+
+      if (!isValid) {
+        errorMsg.classList.remove("d-none");
+        return;
+      }
+
+      if(isValid) {
+        emailjs.sendForm("service_xns64ph", "template_kvnl5cm", form)
+        .then(() => {
+          successMsg.classList.remove("d-none");
+          form.reset();
+        })
+        .catch(() => {
+          errorMsg.classList.remove("d-none");
+        });
+      }
     });
-});
+    
+    function showError(input, message) {
+      const error = document.createElement("small");
+      error.className = "text-danger error-text d-block mt-1";
+      error.innerText = message;
+      input.parentElement.appendChild(error);
+    }
 
 
 })();
